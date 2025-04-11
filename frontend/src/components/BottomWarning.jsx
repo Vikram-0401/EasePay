@@ -1,13 +1,17 @@
-import { Link } from "react-router-dom"
-
-export function BottomWarning({label, buttonText, to}) {
-    return <div className="py-2 text-sm flex justify-center">
-      <div>
-        {label}
+export const Balance = ({ value }) => {
+  return (
+      <div className="bg-white rounded-lg shadow-md p-4 mb-4">
+          <div className="flex justify-between items-center">
+              <div className="font-medium text-gray-600">
+                  Your Balance
+              </div>
+              <div className="font-bold text-2xl text-blue-600">
+                  ₹{value.toLocaleString('en-IN')}
+              </div>
+          </div>
+          <div className="mt-2 pt-2 border-t border-gray-100">
+              <div className="text-xs text-gray-500">Updated just now</div>
+          </div>
       </div>
-      <Link className="pointer underline pl-1 cursor-pointer" to={to}>
-        {buttonText}
-      </Link>
-    </div>
-}
-  
+  );
+};
