@@ -1,17 +1,17 @@
-export const Balance = ({ value }) => {
-  return (
-      <div className="bg-white rounded-lg shadow-md p-4 mb-4">
-          <div className="flex justify-between items-center">
-              <div className="font-medium text-gray-600">
-                  Your Balance
-              </div>
-              <div className="font-bold text-2xl text-blue-600">
-                  ₹{value.toLocaleString('en-IN')}
-              </div>
-          </div>
-          <div className="mt-2 pt-2 border-t border-gray-100">
-              <div className="text-xs text-gray-500">Updated just now</div>
-          </div>
-      </div>
-  );
-};
+import { Link } from "react-router-dom";
+
+export function BottomWarning({ label, buttonText, to }) {
+    return (
+        <div className="py-4 text-sm flex justify-center items-center border-t mt-6">
+            <div className="text-gray-600">
+                {label}
+            </div>
+            <Link 
+                className="ml-1 text-blue-600 font-medium hover:text-blue-800 transition-colors" 
+                to={to}
+            >
+                {buttonText}
+            </Link>
+        </div>
+    );
+}
