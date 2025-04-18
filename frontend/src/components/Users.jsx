@@ -7,13 +7,23 @@ export const Users = () => {
     const [users, setUsers] = useState([]);
     const [filter, setFilter] = useState("");
     const [isLoading, setIsLoading] = useState(true);
+    // Store current user ID from localStorage
+    const currentUserId = localStorage.getItem("userId");
 
     useEffect(() => {
         setIsLoading(true);
         const fetchUsers = setTimeout(() => {
-            axios.get("http://localhost:3000/api/v1/user/bulk?filter=" + filter)
+            axios.get("http://localhost:3000/api/v1/user/bulk?filter=" + filter, {
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("token")
+                }
+            })
                 .then(response => {
-                    setUsers(response.data.user);
+                    // Extra client-side filtering to ensure current user is excluded
+                    const filteredUsers = response.data.user.filter(user => 
+                        user._id !== currentUserId
+                    );
+                    setUsers(filteredUsers);
                     setIsLoading(false);
                 })
                 .catch(error => {
@@ -23,7 +33,7 @@ export const Users = () => {
         }, 300); // Debounce
 
         return () => clearTimeout(fetchUsers);
-    }, [filter]);
+    }, [filter, currentUserId]);
 
     return (
         <div className="bg-white rounded-lg shadow-sm p-4 mt-4">

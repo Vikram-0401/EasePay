@@ -29,6 +29,7 @@ export const Appbar = () => {
         localStorage.removeItem("username");
         localStorage.removeItem("firstName");
         localStorage.removeItem("lastName");
+        localStorage.removeItem("userId");
         navigate("/");
     };
 
@@ -67,16 +68,10 @@ export const Appbar = () => {
                     
                     {showDropdown && (
                         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
-                            <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
+                            <div className="px-4 py-3 text-sm text-gray-700 border-b border-gray-100">
                                 <div className="font-medium text-gray-900">{firstName} {lastName}</div>
                                 <div className="text-xs text-gray-500 truncate">{localStorage.getItem("username")}</div>
                             </div>
-                            <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                Profile Settings
-                            </a>
-                            <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                Transaction History
-                            </a>
                             <button 
                                 onClick={handleLogout}
                                 className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"

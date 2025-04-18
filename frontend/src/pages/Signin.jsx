@@ -25,8 +25,39 @@ export const Signin = () => {
         username,
         password
       });
+      
+      // Store token
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("username", username);
+      
+      // Extract userId from token and store it
+      try {
+        // The token structure should be like: header.payload.signature
+        const tokenParts = response.data.token.split('.');
+        if (tokenParts.length === 3) {
+          const payload = JSON.parse(atob(tokenParts[1]));
+          if (payload.userId) {
+            localStorage.setItem("userId", payload.userId);
+          }
+        }
+      } catch (err) {
+        console.error("Error extracting userId from token", err);
+      }
+      
+      // Fetch additional user info
+      try {
+        const userResponse = await axios.get("http://localhost:3000/api/v1/user/me", {
+          headers: {
+            Authorization: "Bearer " + response.data.token
+          }
+        });
+        
+        localStorage.setItem("firstName", userResponse.data.firstName);
+        localStorage.setItem("lastName", userResponse.data.lastName);
+      } catch (err) {
+        console.error("Error fetching user details", err);
+      }
+      
       navigate("/dashboard");
     } catch (error) {
       alert("Invalid credentials. Please try again.");

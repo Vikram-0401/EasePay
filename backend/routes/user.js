@@ -1,5 +1,6 @@
 // backend/routes/user.js
 const express = require('express');
+const mongoose = require('mongoose');
 
 const router = express.Router();
 const zod = require("zod");
@@ -115,21 +116,33 @@ router.put("/", authMiddleware, async (req, res) => {
     })
 })
 
-router.get("/bulk", async (req, res) => {
+router.get("/bulk", authMiddleware, async (req, res) => {
     const filter = req.query.filter || "";
-
+    
+    // Make sure userId is an ObjectId for proper comparison
+    const userObjectId = new mongoose.Types.ObjectId(req.userId);
+    
     const users = await User.find({
-        $or: [{
-            firstName: {
-                "$regex": filter
+        $and: [
+            {
+                _id: { $ne: userObjectId }
+            },
+            {
+                $or: [{
+                    firstName: {
+                        "$regex": filter,
+                        "$options": "i"
+                    }
+                }, {
+                    lastName: {
+                        "$regex": filter,
+                        "$options": "i"
+                    }
+                }]
             }
-        }, {
-            lastName: {
-                "$regex": filter
-            }
-        }]
-    })
-
+        ]
+    });
+    
     res.json({
         user: users.map(user => ({
             username: user.username,
@@ -137,7 +150,24 @@ router.get("/bulk", async (req, res) => {
             lastName: user.lastName,
             _id: user._id
         }))
-    })
+    });
 })
+
+router.get("/me", authMiddleware, async (req, res) => {
+    const user = await User.findById(req.userId);
+    
+    if (!user) {
+        return res.status(404).json({
+            message: "User not found"
+        });
+    }
+    
+    res.json({
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        _id: user._id
+    });
+});
 
 module.exports = router;

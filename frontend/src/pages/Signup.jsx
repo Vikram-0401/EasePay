@@ -29,10 +29,27 @@ export const Signup = () => {
         lastName,
         password
       });
+      
+      // Store token and basic info
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("username", username);
       localStorage.setItem("firstName", firstName);
       localStorage.setItem("lastName", lastName);
+      
+      // Extract userId from token and store it
+      try {
+        // The token structure should be like: header.payload.signature
+        const tokenParts = response.data.token.split('.');
+        if (tokenParts.length === 3) {
+          const payload = JSON.parse(atob(tokenParts[1]));
+          if (payload.userId) {
+            localStorage.setItem("userId", payload.userId);
+          }
+        }
+      } catch (err) {
+        console.error("Error extracting userId from token", err);
+      }
+      
       navigate("/dashboard");
     } catch (error) {
       alert("Sign up failed. Please try again.");
